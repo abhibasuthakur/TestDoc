@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<commandDefinition commandLanguage="PERL" name="Monitor_aggregates" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;aggregates&quot;" timeoutInSeconds="600" type="STANDARD">
+    <certification>NONE</certification>
+    <uuid>39a27327-9bf2-4e59-b6e1-22a60d99df1c</uuid>
+    <version>1.0.0</version>
+    <command>#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+use WFAUtil;
+my $Aggr_Threshold;
+GetOptions(
+   &quot;Aggr_Threshold=s&quot; =&gt;\$Aggr_Threshold
+  ) or die 'Illegal command parameters\n';
+
+my $FileName;
+
+my $FileNamePrefix = 'c:\Aggregate_Report';
+
+$FileName = $FileNamePrefix.&quot;.csv&quot;;
+
+my $wfa_util = WFAUtil-&gt;new();
+$wfa_util-&gt;sendLog('INFO', 'Creating CSV file: ' . $FileName);
+
+my $query=&quot;SELECT
+    node.name ,aggr.name,ceil(aggr.size_mb/1024),ceil(aggr.used_size_mb /1024),
+    ceil(aggr.available_size_mb/1024),
+    ceil(((aggr.used_size_mb )/ aggr.size_mb) * 100) AS aggregate_used_percentage    
+FROM
+       cm_storage.aggregate AS aggr,
+       cm_storage.node AS node
+    
+WHERE aggr.node_id = node.id AND
+    (
+        (
+            aggr.used_size_mb
+        ) / aggr.size_mb
+    ) * 100 &gt;=  '${Aggr_Threshold}' ORDER BY aggregate_used_percentage DESC&quot;;
+
+my $database=&quot;cm_storage&quot;;
+my @data;
+my $length;
+
+eval {
+@data = $wfa_util-&gt;invokeMySqlQuery($query,$database);
+
+};
+
+$length = @data;
+
+open(FILE, &quot;&gt;$FileName&quot;);
+print FILE &quot;Node Name,Aggr Name,Aggr Size (GB),Aggr Used  (GB),Aggr Available (GB),Aggr Used Percent(%)\n&quot;;
+for (my $index =0; $index &lt; $length; $index++)
+{
+if ($data[$index] ne &quot;\n&quot;)
+{
+if ($data[$index] eq &quot;&quot;)
+{
+print FILE &quot;-,&quot;;
+}
+else {
+print FILE &quot;$data[$index]&quot; . &quot;,&quot;;
+}
+}
+else
+{
+print FILE $data[$index];
+}
+}
+close(FILE);</command>
+    <parameter-mappings>
+        <parameter-mapping attribute="" objectName="Aggr_Threshold" parameterName="Aggr_Threshold"/>
+    </parameter-mappings>
+    <congruenceTest></congruenceTest>
+    <description>Lists details about aggregatesbased above 80% in CSV file</description>
+    <parameter-definitions>
+        <parameter-definition description="Aggregate Threshold percentage value 0 to 100" isMandatory="true" name="Aggr_Threshold" type="Integer">
+            <uuid>146149f1-ac22-49ef-abad-fb152e5778a5</uuid>
+        </parameter-definition>
+    </parameter-definitions>
+    <reservationScript></reservationScript>
+    <schemeNames></schemeNames>
+</commandDefinition>

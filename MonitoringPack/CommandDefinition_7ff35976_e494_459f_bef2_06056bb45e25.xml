@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<commandDefinition commandLanguage="POWER_SHELL" name="Convert To html" samplingIntervalInSeconds="60" stringRepresentation="&quot;Csv=&gt;html&quot;" timeoutInSeconds="600" type="STANDARD">
+    <certification>NONE</certification>
+    <uuid>7ff35976-e494-459f-bef2-06056bb45e25</uuid>
+    <version>1.0.0</version>
+    <command>$a = &quot;&lt;style&gt;&quot;
+$a = $a + &quot;HEAD{}&quot;
+$a = $a + &quot;TABLE{border-width: 1px;border-style: solid;border-color: black;border-collapse: collapse;}&quot;
+$a = $a + &quot;TH{border-width: 1px;padding: 0px;border-style: solid;border-color: black;background-color:#CEE6FF;color:black}&quot;
+$a = $a + &quot;TD{border-width: 1px;padding: 0px;border-style: solid;border-color: black;background-color:#ffffff;color:black;font: 15px arial}&quot;
+$a = $a + &quot;&lt;/style&gt;&quot;
+Get-Content &quot;c:\Aggregate_Report.csv&quot; | Select -skip 0 | ConvertFrom-CSV | ConvertTo-HTML -Head $a |Out-File &quot;C:\Aggregate_Report.html&quot;
+Get-Content &quot;c:\Volume_Report.csv&quot; | Select -skip 0 | ConvertFrom-CSV | ConvertTo-HTML -Head $a |Out-File &quot;C:\Volume_Report.html&quot;
+Get-Content &quot;c:\Aggr_Vol_Report.csv&quot; | Select -skip 0 | ConvertFrom-CSV | ConvertTo-HTML -Head $a |Out-File &quot;C:\Aggr_Vol_Report.html&quot;
+</command>
+    <parameter-mappings/>
+    <congruenceTest></congruenceTest>
+    <description>Converts CSV Files into HTML</description>
+    <parameter-definitions/>
+    <reservationScript></reservationScript>
+    <schemeNames></schemeNames>
+</commandDefinition>

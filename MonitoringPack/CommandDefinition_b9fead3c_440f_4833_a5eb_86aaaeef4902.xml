@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<commandDefinition commandLanguage="PERL" name="Monitor_Vol_Aggr" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;Vol_Aggr&quot;" timeoutInSeconds="600" type="STANDARD">
+    <certification>NONE</certification>
+    <uuid>b9fead3c-440f-4833-a5eb-86aaaeef4902</uuid>
+    <version>1.0.0</version>
+    <command>#!/usr/bin/perl
+
+use Getopt::Long;
+use WFAUtil;
+my $Aggr_Threshold;
+my $Volume_Threshold;
+GetOptions(
+   &quot;Aggr_Threshold=s&quot; =&gt;\$Aggr_Threshold,
+    &quot;Volume_Threshold=s&quot;=&gt;\$Volume_Threshold
+  ) or die 'Illegal command parameters\n';
+my $FileName;
+my $FileNamePrefix = 'c:\Aggr_Vol_Report';
+$FileName = $FileNamePrefix.&quot;.csv&quot;;
+
+my $wfa_util = WFAUtil-&gt;new();
+$wfa_util-&gt;sendLog('INFO', 'Creating CSV file: ' . $FileName);
+
+my $query=&quot;SELECT
+    cluster.primary_address,vserver.name, 
+    aggregate.name,ceil(aggregate.size_mb/1024),ceil(aggregate.used_size_mb /1024),
+    ceil(aggregate.available_size_mb/1024),
+    ceil(((aggregate.used_size_mb )/ aggregate.size_mb) * 100) AS aggregate_used_percentage,
+    volume.name,ceil(volume.size_mb/1024),
+    ceil(volume.used_size_mb/1024),ceil(volume.available_size_mb/1024),
+    ceil((( volume.used_size_mb) / volume.size_mb)* 100) AS vol_used_percent
+   
+    
+FROM
+    cm_storage.volume,
+    cm_storage.vserver,
+    cm_storage.cluster,
+    cm_storage.aggregate,
+    cm_storage.node
+WHERE
+   volume.vserver_id = vserver.id
+    AND vserver.cluster_id = cluster.id
+    AND volume.aggregate_id = aggregate.id
+    AND aggregate.node_id = node.id
+    AND  (
+        (
+            aggregate.used_size_mb
+        ) / aggregate.size_mb
+    ) * 100 &gt;= '${Aggr_Threshold}'
+    AND
+        (
+        (
+            volume.used_size_mb
+        ) / volume.size_mb
+    ) * 100 &gt;=  '${Volume_Threshold}' ORDER BY vol_used_percent DESC,aggregate_used_percentage DESC
+&quot;;
+my $database=&quot;cm_storage&quot;;
+my @data;
+my $length;
+
+eval {
+@data = $wfa_util-&gt;invokeMySqlQuery($query,$database);
+
+};
+
+$length = @data;
+
+open(FILE, &quot;&gt;$FileName&quot;);
+print FILE &quot;Cluster IP,Node Name,Aggr Name,Aggr Size (GB),Aggr Used  (GB),Aggr Available (GB),Aggr Used Percent(%),Volume Name,Vol Size (GB),Vol Used Space (GB),Vol Available (GB),Vol Used Percentage (%)\n&quot;;
+for (my $index =0; $index &lt; $length; $index++)
+{
+if ($data[$index] ne &quot;\n&quot;)
+{
+if ($data[$index] eq &quot;&quot;)
+{
+print FILE &quot;-,&quot;;
+}
+else {
+print FILE &quot;$data[$index]&quot; . &quot;,&quot;;
+}
+}
+else
+{
+print FILE $data[$index];
+}
+}
+close(FILE);</command>
+    <parameter-mappings>
+        <parameter-mapping objectName="Aggr_Threshold" parameterName="Aggr_Threshold"/>
+        <parameter-mapping objectName="Volume_Threshold" parameterName="Volume_Threshold"/>
+    </parameter-mappings>
+    <congruenceTest></congruenceTest>
+    <description>Gives Information about both volumes and aggregates above threshold </description>
+    <parameter-definitions>
+        <parameter-definition isMandatory="true" name="Aggr_Threshold" type="Integer">
+            <uuid>cd44af58-4f5e-44d6-9658-ac7b2122862d</uuid>
+        </parameter-definition>
+        <parameter-definition isMandatory="true" name="Volume_Threshold" type="Integer">
+            <uuid>3a88b5cf-393a-4481-8c63-d73b340a06bc</uuid>
+        </parameter-definition>
+    </parameter-definitions>
+    <reservationScript></reservationScript>
+    <schemeNames></schemeNames>
+</commandDefinition>

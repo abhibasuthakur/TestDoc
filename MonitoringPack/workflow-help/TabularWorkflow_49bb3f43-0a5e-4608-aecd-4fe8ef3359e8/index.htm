@@ -1,0 +1,169 @@
+
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 14 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+{font-family:Wingdings;
+panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+{font-family:"MS Mincho";
+panose-1:2 2 6 9 4 2 5 8 3 4;}
+@font-face
+{font-family:"MS Mincho";
+panose-1:2 2 6 9 4 2 5 8 3 4;}
+@font-face
+{font-family:"Lucida Grande";}
+@font-face
+{font-family:Times;
+panose-1:2 2 6 3 5 4 5 2 3 4;}
+@font-face
+{font-family:"\@MS Mincho";
+panose-1:2 2 6 9 4 2 5 8 3 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+{margin:0in;
+margin-bottom:.0001pt;
+font-size:12.0pt;
+font-family:"Cambria","serif";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+{mso-style-link:"Balloon Text Char";
+margin:0in;
+margin-bottom:.0001pt;
+font-size:9.0pt;
+font-family:"Lucida Grande";}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+{margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:.5in;
+margin-bottom:.0001pt;
+font-size:12.0pt;
+font-family:"Cambria","serif";}
+p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst
+{margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:.5in;
+margin-bottom:.0001pt;
+font-size:12.0pt;
+font-family:"Cambria","serif";}
+p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle
+{margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:.5in;
+margin-bottom:.0001pt;
+font-size:12.0pt;
+font-family:"Cambria","serif";}
+p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast
+{margin-top:0in;
+margin-right:0in;
+margin-bottom:0in;
+margin-left:.5in;
+margin-bottom:.0001pt;
+font-size:12.0pt;
+font-family:"Cambria","serif";}
+span.BalloonTextChar
+{mso-style-name:"Balloon Text Char";
+mso-style-link:"Balloon Text";
+font-family:"Lucida Grande";}
+.MsoChpDefault
+{font-size:12.0pt;
+font-family:"Cambria","serif";}
+@page WordSection1
+{size:8.5in 11.0in;
+margin:1.0in 1.25in 1.0in 1.25in;}
+div.WordSection1
+{page:WordSection1;}
+ /* List Definitions */
+ ol
+{margin-bottom:0in;}
+ul
+{margin-bottom:0in;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US>
+
+<div class=WordSection1>
+
+<p class=MsoNormal align=center style='text-align:center'><b><span
+style='font-size:18.0pt;font-family:"Times","serif";color:#4F81BD'>Monitor  Volumes and Aggregates</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt;font-family:"Times","serif"'>Goal</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>This
+workflow will Monitor all the volumes and aggregates whose used capacity is greater than or equal to the threshold values provided.The monitored results will be mailed to the specific user specified in user inputs.<br/>This work flow has following comands</span></p>
+
+<p class=MsoListParagraphCxSpFirst style='text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt;font-family:"Times","serif"'>Monitor Volumes: gives list of all volumes whose used percentage is greater than provided volume threshold.</span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt;font-family:"Times","serif"'>Monitor Aggregates: gives list of all volumes whose used percentage is greater than provided Aggregate threshold. </span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt;font-family:"Times","serif"'>Monitor Volumes and Aggregates: gives list of all volumes and aggregates whose used percentage is greater than provided volume_threshold and aggregate threshold.</span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt;font-family:"Times","serif"'>Convert CSV to HTML: Monitoring commands generate reports in CSV format and this command converts CSV to HTML for easy readability</span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt;font-family:"Times","serif"'>Send Email Reports:This command emails the genrerated reports to a specific user.</span></p>
+
+<p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt;font-family:"Times","serif"'>Scheduler:This command schedules the work flow  for recurring execution.</span></p>
+
+
+<p class=MsoNormal><b><span style='font-size:14.0pt;font-family:"Times","serif"'>User Inputs </span></b></p>
+
+<p><img width=550 height=550 id="Picture 1" src="image1.png"></p>
+
+<p class=MsoNormal><b><span style='font-size:12.0pt;font-family:"Times","serif"'>Threshold Input parameters:</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>1)
+Aggr_Threshold(required) – This takes input range from 1-100 and filters all the aggregates whose used percentage greater the given input..</span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>2)
+Volume_Threshold(required) – This takes input range from 1-100 and filters all the volumes whose used percentage greater the given input..</span></p><br/>
+
+<p class=MsoNormal><b><span style='font-size:12.0pt;font-family:"Times","serif"'>Schedule Input parameters:</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>
+Schedule Inputs(atleast one required) – This takes several interval parameters like day,hour,minute,year,months and week at  which the workflow should execute.Atleast one parameter is mandatory.By default day is set to 1.</span></p><br/>
+
+<p class=MsoNormal><b><span style='font-size:12.0pt;font-family:"Times","serif"'>E-mail Input parameters:</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>
+Email Inputs(all required) – This takes inputs like To address,From address and SMTP IP/Hostname.It attaches the reports and sents the email to a specific user mentioned in To address.</span></p><br/>
+<p class=MsoNormal style='margin-left:.5in'><span style='font-size:10.0pt;
+font-family:"Times","serif"'>&nbsp;</span></p>
+<p class=MsoNormal><b><span style='font-size:14.0pt;font-family:"Times","serif"'>Abort</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>This workflow will execute recursively according to the schedule.If you  want to abort this workflow from execution you can do it by going to execution tab,click on execution status and then right click and choose abort. </span></p><br/>
+
+<p class=MsoNormal><b><span style='font-size:14.0pt;font-family:"Times","serif"'>Result</span></b></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Times","serif"'>The
+workflow will monitor volumes and aggregates above threshold and send mail by attaching the reports to the user.<br/>The work flow will send reports at specified intervals continiously. </span></p>
+
+
+</div>
+
+</body>
+
+</html>

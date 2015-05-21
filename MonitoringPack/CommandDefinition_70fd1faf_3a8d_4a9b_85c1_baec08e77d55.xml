@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<commandDefinition commandLanguage="POWER_SHELL" name="Workflow Scheduler" samplingIntervalInSeconds="60" stringRepresentation="&quot;Workflow Scheduler&quot;" timeoutInSeconds="600" type="STANDARD">
+    <certification>NONE</certification>
+    <uuid>70fd1faf-3a8d-4a9b-85c1-baec08e77d55</uuid>
+    <version>1.0.0</version>
+    <command>param (
+  
+  [parameter(Mandatory=$false, HelpMessage=&quot;Minutes Interval&quot;)]
+  [int]$minsInterval,
+
+  [parameter(Mandatory=$false, HelpMessage=&quot;Hours Interval. Provide value 1 for Hourly execution.&quot;)]
+  [int]$hoursInterval,
+
+  [parameter(Mandatory=$false, HelpMessage=&quot;Days Interval. Provide value 1 for daily execution.&quot;)]
+  [int]$daysInterval,
+
+  [parameter(Mandatory=$false, HelpMessage=&quot;Weeks Interval. Provide value 1 for weekly execution.&quot;)]
+  [int]$weeksInterval,
+
+  [parameter(Mandatory=$false, HelpMessage=&quot;Months Interval. Provide value 1 for montly execution.&quot;)]
+  [int]$monthsInterval,
+
+  [parameter(Mandatory=$false, HelpMessage=&quot;Years Interval. Provide value 1 for yearly execution.&quot;)]
+  [int]$yearsInterval
+  
+)
+
+#---Check for PoSH version. It should be &gt;=3.0
+
+if ($PSVersionTable.PSVersion.Major -le '2')
+{
+	throw(&quot;Minimun PowerShell version required in 3.0&quot;)
+}
+#------  Get the current workflow UUI and the Current Job ID
+
+$myWfaCreds = Get-WfaCredentials -Host &quot;localhost&quot;
+if (!$myWfaCreds)
+{
+     throw(&quot;No credentials added for localhost&quot;)
+}
+
+$workflowName = Get-WfaRestParameter &quot;workflowName&quot;
+$jobId = Get-WfaRestParameter &quot;jobId&quot;
+
+Get-WfaLogger -Info -Message $workflowName
+Get-WfaLogger -Info -Message $jobId
+
+#Get the WFA http port
+$REGISTRY = &quot;HKLM:\SOFTWARE\Wow6432Node\Apache Software Foundation\Procrun 2.0\NA_WFA_SRV\Parameters\Java&quot;
+$httpPort = (Get-ItemProperty $REGISTRY |select -ExpandProperty Options|where {$_ -match &quot;-Dhttp.port&quot;}).split(&quot;=&quot;)[1]	
+$httpsPort = (Get-ItemProperty $REGISTRY |select -ExpandProperty Options|where {$_ -match &quot;-Dhttps.port&quot;}).split(&quot;=&quot;)[1]
+
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+
+$Url= 'http://localhost:' + $httpPort + '/rest/workflows?name=' + $WorkflowName
+Get-WfaLogger -Info -Message $Url
+
+#Get UUID of the workflow
+$uuid=(Invoke-RestMethod -Method get -Uri $url -Credential $myWfaCreds).collection.workflow.uuid
+
+Get-WfaLogger -Info -Message $uuid
+
+
+# Now get the current Job' details. You need user inputs.
+
+$Url2=&quot;http://localhost:&quot; + $httpPort +&quot;/rest/workflows/&quot;+ $uuid + &quot;/jobs/&quot; + $jobId
+Get-WfaLogger -Info -Message $Url2
+
+
+[xml]$data=Invoke-RestMethod -Method get -Uri $Url2 -Credential $myWfaCreds -ContentType &quot;application/xml&quot;
+
+$keys = $data.job.jobStatus.userInputValues.userInputEntry.key 
+$values = $data.job.jobStatus.userInputValues.userInputEntry.value
+
+
+[xml]$xmlDoc = New-Object system.Xml.XmlDocument
+
+$xmlDoc.LoadXml('&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;workflowInput&gt;&lt;/workflowInput&gt;')
+$ele1 = $xmlDoc.CreateElement(&quot;userInputValues&quot;, $xmlDoc.DocumentElement.NamespaceURI)
+
+$index = 0
+foreach ( $key in $keys )
+{
+$key = $key.Split(&quot;$&quot;)[1]
+
+$ele= $xmlDoc.CreateElement(&quot;userInputEntry&quot;, $xmlDoc.DocumentElement.NamespaceURI)
+$attr1 = $xmlDoc.CreateAttribute(&quot;key&quot;)
+$attr1.Value = $key
+
+$attr2 = $xmlDoc.CreateAttribute(&quot;value&quot;)
+$attr2.Value = $($values[$index])
+
+$ele.Attributes.Append($attr1)
+$ele.Attributes.Append($attr2)
+$ele1.AppendChild($ele)
+$index++
+
+}
+
+$xmlDoc.LastChild.AppendChild($ele1)
+
+#### Get next execution date and time
+
+if($minsInterval)
+{
+	$newDate = (get-date).AddMinutes($minsInterval)
+}
+
+if($hoursInterval)
+{
+	$newDate = (get-date).AddHours($hoursInterval)
+}
+if($daysInterval)
+{
+	$newDate = (get-date).AddDays($daysInterval)
+}
+if($weeksInterval)
+{
+	$totalDays = $weeksInterval * 7
+	$newDate = (get-date).AddDays($totalDays)
+}
+if($monthsInterval)
+{
+	$newDate = (get-date).AddMonths($monthsInterval)
+}
+if($yearsInterval)
+{
+	$newDate = (get-date).AddYears($yearsInterval)
+}
+
+$newWfaDate = $newDate.GetDateTimeFormats(&quot;g&quot;)[0]
+
+Get-WfaLogger -Info -Message $newWfaDate
+
+####
+
+
+$ele3 = $xmlDoc.CreateElement(&quot;executionDateAndTime&quot;, $xmlDoc.DocumentElement.NamespaceURI)
+	$xmlSubText = $xmlDoc.CreateTextNode($newWfaDate)
+	$ele3.AppendChild($xmlSubText)
+	$xmlDoc.LastChild.AppendChild($ele3)
+
+if ($data.job.jobStatus.comment)
+{
+$comment = $data.job.jobStatus.comment
+
+$ele2 = $xmlDoc.CreateElement(&quot;comments&quot;, $xmlDoc.DocumentElement.NamespaceURI)
+	$xmlSubText = $xmlDoc.CreateTextNode($comment)
+	$ele2.AppendChild($xmlSubText)
+	$xmlDoc.LastChild.AppendChild($ele2)
+
+}
+
+Get-WfaLogger -Info -Message $xmlDoc.OuterXml
+
+
+####### ----- Now invoke the workflow with delayed execution
+
+$Url3= &quot;https://localhost:&quot; + $httpsPort +&quot;/rest/workflows/&quot;+ $uuid + &quot;/jobs&quot; 
+Get-WfaLogger -Info -Message $Url3
+
+$res=Invoke-RestMethod -Method post -Uri $Url3 -Body $xmlDoc.OuterXml -Credential $myWfaCreds -ContentType &quot;application/xml&quot;
+
+Get-WfaLogger -Info -Message &quot;Shchduled for next execution at $newWfaDate&quot;
+
+
+</command>
+    <parameter-mappings>
+        <parameter-mapping objectName="daysInterval" parameterName="daysInterval"/>
+        <parameter-mapping objectName="hoursInterval" parameterName="hoursInterval"/>
+        <parameter-mapping objectName="minsInterval" parameterName="minsInterval"/>
+        <parameter-mapping objectName="monthsInterval" parameterName="monthsInterval"/>
+        <parameter-mapping objectName="weeksInterval" parameterName="weeksInterval"/>
+        <parameter-mapping objectName="yearsInterval" parameterName="yearsInterval"/>
+    </parameter-mappings>
+    <description>Command to schedule a workflow for recurring execution with a pecified period of interval.
+
+Prerequisites:
+
+1. You need PowerShell 3.0 on your WFA server. 
+
+2. Add credentials of a WFA Admin/Architect in you WFA itself with Name/IP: localhost
+
+Match: Exact
+Type: Other
+Name/IP: localhost
+Username: &lt;WFA Admin/Architect Username&gt;
+Password: &lt;User Password&gt;
+
+</description>
+    <parameter-definitions>
+        <parameter-definition description="Days Interval. Provide value 1 for daily execution." isMandatory="false" name="daysInterval" type="Integer">
+            <uuid>cd3a22f6-5ced-48a9-acfc-cfbde12f576f</uuid>
+        </parameter-definition>
+        <parameter-definition description="Hours Interval. Provide value 1 for Hourly execution." isMandatory="false" name="hoursInterval" type="Integer">
+            <uuid>1737b662-92d7-4b62-a3d4-a6d10d4cb568</uuid>
+        </parameter-definition>
+        <parameter-definition description="Minutes Interval" isMandatory="false" name="minsInterval" type="Integer">
+            <uuid>5242da7e-0ea4-4280-823e-58a7c64e3a9b</uuid>
+        </parameter-definition>
+        <parameter-definition description="Months Interval. Provide value 1 for montly execution." isMandatory="false" name="monthsInterval" type="Integer">
+            <uuid>49ccd5b1-ca3e-4707-9c62-bc8416e38f11</uuid>
+        </parameter-definition>
+        <parameter-definition description="Weeks Interval. Provide value 1 for weekly execution." isMandatory="false" name="weeksInterval" type="Integer">
+            <uuid>938feb82-1db0-450f-9b59-a2689877287f</uuid>
+        </parameter-definition>
+        <parameter-definition description="Years Interval. Provide value 1 for yearly execution." isMandatory="false" name="yearsInterval" type="Integer">
+            <uuid>9520a15c-f1b0-42be-beaf-4d9df02531d9</uuid>
+        </parameter-definition>
+    </parameter-definitions>
+    <schemeNames></schemeNames>
+</commandDefinition>

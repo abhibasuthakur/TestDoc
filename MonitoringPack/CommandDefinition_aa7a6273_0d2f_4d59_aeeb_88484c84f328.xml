@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<commandDefinition commandLanguage="POWER_SHELL" name="Send email Reports" samplingIntervalInSeconds="60" stringRepresentation="From + &quot;=&gt;&quot; + To" timeoutInSeconds="10" type="STANDARD">
+    <certification>NONE</certification>
+    <uuid>aa7a6273-0d2f-4d59-aeeb-88484c84f328</uuid>
+    <version>1.0.0</version>
+    <command>param (
+        [parameter(Mandatory=$true, HelpMessage=&quot;SMTP server for sending the email item&quot;)]
+        [string]$SmtpHost,
+
+        [parameter(Mandatory=$true, HelpMessage=&quot;Recipient's SMTP email address&quot;)]
+        [string]$To,
+
+        [parameter(Mandatory=$true, HelpMessage=&quot;From field's SMTP email address&quot;)]
+        [string]$From
+          )
+$attachment1=&quot;c:\Aggregate_Report.html&quot;
+$attachment2=&quot;c:\Volume_Report.html&quot;
+$attachment3=&quot;c:\Aggr_Vol_Report.html&quot;
+$Subject = &quot;Volumes and Aggregates usage %&quot;
+$Body = &quot;Hi,&lt;br&gt;&lt;p&gt;Please find attached the list of aggregates and volumes that are more than threshold% .&lt;br&gt; 
+                                     Please address the volumes that reside on aggregates that are more than 80% utilized &lt;br&gt;
+                                     immediately.&lt;br&gt;&lt;br&gt;&lt;p&gt;regards,&lt;br&gt;WFA Team.&lt;/p&gt;&quot;
+       
+Get-WFALogger -Info -message $(&quot;Sending email to &quot; + $To)
+
+Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -SmtpServer $SmtpHost  -Attachments $attachment1,$attachment2,$attachment3 -BodyAsHtml </command>
+    <parameter-mappings>
+        <parameter-mapping objectName="From" parameterName="From"/>
+        <parameter-mapping objectName="Smtp Host" parameterName="SmtpHost"/>
+        <parameter-mapping objectName="To" parameterName="To"/>
+    </parameter-mappings>
+    <congruenceTest></congruenceTest>
+    <description>Sends all reports as attachments through email to a particular user 
+The email will be sent via a designated SMTP server (not necessarily the one used for WFA notifications) .  </description>
+    <parameter-definitions>
+        <parameter-definition description="From field's SMTP email address" isMandatory="true" name="From" type="String">
+            <uuid>1cbf1120-5de5-49c5-93cb-f32181de5ee8</uuid>
+        </parameter-definition>
+        <parameter-definition description="SMTP server for sending the email item" isMandatory="true" name="SmtpHost" type="String">
+            <uuid>db1b3c07-243b-49f1-98a7-1ce5eadc20cd</uuid>
+        </parameter-definition>
+        <parameter-definition description="Recipient's SMTP email address" isMandatory="true" name="To" type="String">
+            <uuid>845a01f1-d731-492d-9530-89d2934cc71e</uuid>
+        </parameter-definition>
+    </parameter-definitions>
+    <reservationScript></reservationScript>
+    <schemeNames></schemeNames>
+</commandDefinition>
