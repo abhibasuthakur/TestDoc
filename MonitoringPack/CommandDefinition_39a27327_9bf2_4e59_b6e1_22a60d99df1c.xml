@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<commandDefinition commandLanguage="PERL" name="Monitor_aggregates" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;aggregates&quot;" timeoutInSeconds="600" type="STANDARD">
+<commandDefinition name="Monitor_aggregates" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;aggregates&quot;" timeoutInSeconds="600" type="STANDARD">
     <certification>NONE</certification>
     <uuid>39a27327-9bf2-4e59-b6e1-22a60d99df1c</uuid>
     <version>1.0.0</version>
-    <command>#!/usr/bin/perl
+    <command-implementations>
+        <command-implementation>
+            <command>#!/usr/bin/perl
 
 use strict;
+
 
 use Getopt::Long;
 use WFAUtil;
@@ -69,6 +72,9 @@ print FILE $data[$index];
 }
 }
 close(FILE);</command>
+            <commandLanguage>PERL</commandLanguage>
+        </command-implementation>
+    </command-implementations>
     <parameter-mappings>
         <parameter-mapping attribute="" objectName="Aggr_Threshold" parameterName="Aggr_Threshold"/>
     </parameter-mappings>

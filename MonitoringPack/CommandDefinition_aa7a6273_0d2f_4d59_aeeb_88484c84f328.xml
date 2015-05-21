@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<commandDefinition commandLanguage="POWER_SHELL" name="Send email Reports" samplingIntervalInSeconds="60" stringRepresentation="From + &quot;=&gt;&quot; + To" timeoutInSeconds="10" type="STANDARD">
+<commandDefinition name="Send email Reports" samplingIntervalInSeconds="60" stringRepresentation="From + &quot;=&gt;&quot; + To" timeoutInSeconds="10" type="STANDARD">
     <certification>NONE</certification>
     <uuid>aa7a6273-0d2f-4d59-aeeb-88484c84f328</uuid>
     <version>1.0.0</version>
-    <command>param (
+    <command-implementations>
+        <command-implementation>
+            <command>param (
         [parameter(Mandatory=$true, HelpMessage=&quot;SMTP server for sending the email item&quot;)]
         [string]$SmtpHost,
 
@@ -24,6 +26,9 @@ $Body = &quot;Hi,&lt;br&gt;&lt;p&gt;Please find attached the list of aggregates 
 Get-WFALogger -Info -message $(&quot;Sending email to &quot; + $To)
 
 Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -SmtpServer $SmtpHost  -Attachments $attachment1,$attachment2,$attachment3 -BodyAsHtml </command>
+            <commandLanguage>POWER_SHELL</commandLanguage>
+        </command-implementation>
+    </command-implementations>
     <parameter-mappings>
         <parameter-mapping objectName="From" parameterName="From"/>
         <parameter-mapping objectName="Smtp Host" parameterName="SmtpHost"/>

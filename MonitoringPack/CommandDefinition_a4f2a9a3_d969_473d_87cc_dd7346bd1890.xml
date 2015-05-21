@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<commandDefinition commandLanguage="PERL" name="Monitor_volumes" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;volumes&quot;" timeoutInSeconds="600" type="STANDARD">
+<commandDefinition name="Monitor_volumes" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;volumes&quot;" timeoutInSeconds="600" type="STANDARD">
     <certification>NONE</certification>
     <uuid>a4f2a9a3-d969-473d-87cc-dd7346bd1890</uuid>
     <version>1.0.0</version>
-    <command>#!/usr/bin/perl
+    <command-implementations>
+        <command-implementation>
+            <command>#!/usr/bin/perl
 
 
 
@@ -82,6 +84,9 @@ print FILE $data[$index];
 }
 }
 close(FILE);</command>
+            <commandLanguage>PERL</commandLanguage>
+        </command-implementation>
+    </command-implementations>
     <parameter-mappings>
         <parameter-mapping objectName="Volume_Threshold" parameterName="Volume_Threshold"/>
     </parameter-mappings>

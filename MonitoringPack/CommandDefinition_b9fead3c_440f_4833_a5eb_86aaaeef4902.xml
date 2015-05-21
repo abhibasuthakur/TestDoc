@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<commandDefinition commandLanguage="PERL" name="Monitor_Vol_Aggr" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;Vol_Aggr&quot;" timeoutInSeconds="600" type="STANDARD">
+<commandDefinition name="Monitor_Vol_Aggr" reservationRepresentation="" samplingIntervalInSeconds="10" stringRepresentation="&quot;Vol_Aggr&quot;" timeoutInSeconds="600" type="STANDARD">
     <certification>NONE</certification>
     <uuid>b9fead3c-440f-4833-a5eb-86aaaeef4902</uuid>
     <version>1.0.0</version>
-    <command>#!/usr/bin/perl
+    <command-implementations>
+        <command-implementation>
+            <command>#!/usr/bin/perl
 
 use Getopt::Long;
 use WFAUtil;
@@ -84,6 +86,9 @@ print FILE $data[$index];
 }
 }
 close(FILE);</command>
+            <commandLanguage>PERL</commandLanguage>
+        </command-implementation>
+    </command-implementations>
     <parameter-mappings>
         <parameter-mapping objectName="Aggr_Threshold" parameterName="Aggr_Threshold"/>
         <parameter-mapping objectName="Volume_Threshold" parameterName="Volume_Threshold"/>

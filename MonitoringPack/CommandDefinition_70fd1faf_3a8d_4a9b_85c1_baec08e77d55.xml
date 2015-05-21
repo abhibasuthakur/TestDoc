@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<commandDefinition commandLanguage="POWER_SHELL" name="Workflow Scheduler" samplingIntervalInSeconds="60" stringRepresentation="&quot;Workflow Scheduler&quot;" timeoutInSeconds="600" type="STANDARD">
+<commandDefinition name="Workflow Scheduler" samplingIntervalInSeconds="60" stringRepresentation="&quot;Workflow Scheduler&quot;" timeoutInSeconds="600" type="STANDARD">
     <certification>NONE</certification>
     <uuid>70fd1faf-3a8d-4a9b-85c1-baec08e77d55</uuid>
     <version>1.0.0</version>
-    <command>param (
+    <command-implementations>
+        <command-implementation>
+            <command>param (
   
   [parameter(Mandatory=$false, HelpMessage=&quot;Minutes Interval&quot;)]
   [int]$minsInterval,
@@ -165,6 +167,9 @@ Get-WfaLogger -Info -Message &quot;Shchduled for next execution at $newWfaDate&q
 
 
 </command>
+            <commandLanguage>POWER_SHELL</commandLanguage>
+        </command-implementation>
+    </command-implementations>
     <parameter-mappings>
         <parameter-mapping objectName="daysInterval" parameterName="daysInterval"/>
         <parameter-mapping objectName="hoursInterval" parameterName="hoursInterval"/>
